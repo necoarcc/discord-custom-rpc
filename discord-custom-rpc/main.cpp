@@ -49,6 +49,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	{
 		Json Config = Json::parse(Data, Data + FileSize);
 		delete[] Data;
+		Data = nullptr;
 		if (discord::Core::Create(Config["ClientID"].get<int64_t>(), DiscordCreateFlags_Default, &Core) != discord::Result::Ok)
 			throw std::runtime_error("Failed to create a discord instance");
 		auto& ActivityManager = Core->ActivityManager();
@@ -76,12 +77,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	catch (const Json::exception& e)
 	{
 		MessageBoxA(NULL, e.what(), "Error", MB_ICONERROR);
-		delete[] Data;
+		if(Data) delete[] Data;
+		if(Core) delete Core
 		return 1;
 	}
 	catch (const std::runtime_error& e)
 	{
 		MessageBoxA(NULL, e.what(), "Error", MB_ICONERROR);
+		if(Data) delete[] Data;
 		if (Core) delete Core;
 		return 1;
 	}
