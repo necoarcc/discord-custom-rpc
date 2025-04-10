@@ -27,7 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		CloseHandle(File);
 		return 1;
 	}
-	char* Data = new char[FileSize];
+	char* Data = new (std::nothrow) char[FileSize];
 	if (!Data)
 	{
 		CloseHandle(File);
